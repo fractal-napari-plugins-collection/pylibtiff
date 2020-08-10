@@ -1,4 +1,4 @@
-![Release](https://img.shields.io/badge/dynamic/json?color=blue&label=release&prefix=v&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ffmi-basel%2Fpython-for-data-science%2Fmaster%2Finfo.json%3Ftoken%3DAFSHUIXBHGUMJ5KUVTXAVZ26DDP66)
+![Release](https://img.shields.io/badge/dynamic/json?color=blue&label=release&prefix=v&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2Ffmi-basel%2Fpylibtiff%2Fmaster%2Finfo.json%3Ftoken%3DAFSHUIRGODW7LWHDAGLCMAK7HJ5H2)
 ![Python](https://img.shields.io/badge/python-3.6%20|%203.8-blue)
 ![Platform](https://img.shields.io/badge/platform-windows%20%7C%20linux%20%7C%20macos-lightgrey)
 ![Build](https://github.com/fmi-basel/pylibtiff/workflows/build/badge.svg?branch=master)

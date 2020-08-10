@@ -1,0 +1,10 @@
+{
+    "organization": "fmi-basel",
+    "team": "gliberal",
+    "version": "0.1.0",
+    "platform": ["windows", "linux", "macos"],
+    "languages" : {
+        "python": "3.6",
+        "python": "3.8"
+    }
+}

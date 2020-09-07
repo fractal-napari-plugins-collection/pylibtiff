@@ -2,4 +2,6 @@ pylint==2.4.4
 pycodestyle==2.5.0
 coverage==4.5.4
 sphinx==2.3.1
+recommonmark==0.6.0
+Jinja2==2.10
 -e .

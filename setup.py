@@ -1,3 +1,4 @@
+import json
 import platform
 from setuptools import setup, find_packages, Extension
 import sys
@@ -31,24 +32,31 @@ class LazyPyBind11IncludeDirWrapper(object):
 
 
 tiff_extention_module = Extension(
-    'pylibtiff.ext.pyramidal_tiff_file',
+    'pylibtiff.ext.tiff_file',
     library_dirs=library_dirs,
     libraries=['tiff', 'jpeg', 'z'],
-    sources=['src/ext/pyramidal_tiff_file.cpp'],
+    sources=[
+        'src/ext/utils.cpp',
+        'src/ext/tiff_reader.cpp',
+        'src/ext/tiff_writer.cpp',
+        'src/ext/tiff_file.cpp'
+    ],
     include_dirs=[
         LazyPyBind11IncludeDirWrapper(),
         LazyPyBind11IncludeDirWrapper(user=True),
         *include_dirs
     ],
-    extra_compile_args=['-std=c++11'],
+    extra_compile_args=['-std=c++14'],
     extra_link_args=extra_link_args,
     language='c++',
 )
 
+with open('./info.json', 'r') as fh:
+    info = json.load(fh)
 
 setup(
     name='pylibtiff',
-    version='0.1.0',
+    version=info['version'],
     author='D. Vischi',
     author_email='dario.vischi@fmi.ch',
     classifiers=[
@@ -56,7 +64,7 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     packages=find_packages('src', exclude=['tests']),
-    package_dir={'pylibtiff': './src/pylibtiff'},
+    package_dir={'': 'src'},
     # read additional package data from MANIFEST.in
     # not compatible with package_data
     include_package_data=False,

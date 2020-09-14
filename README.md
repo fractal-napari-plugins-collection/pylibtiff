@@ -85,18 +85,25 @@ The following code snippet shows how to use the Python package within another
 project:
 
 ```python
-from pylibtiff.ext.pyramidal_tiff_file import PyramidalTiffFile
+import numpy as np
+from pylibtiff import TiffFile
 
-image_path = "path/to/image.tif"
-ptif = PyramidalTiffFile(image_path)
+# initialize a TIFF file (only reads meta information)
+file_path = 'path_to_tiff_file'
+tiff = TiffFile(file_path)
 
-# iterate over all pages within the multi-scale TIFF
-for page_id in range(ptif.get_page_count()):
-    # read a 100x100 tile from the origin (10, 10) of the current resolution
-    # as Numpy array
-    y, x = 10, 10
-    height, width = 100, 100
-    a = ptif.crop(y, x, y+height, x+width, page_id)
+# read first subfile as Numpy array
+np_array = tiff.read_subfile(0)
+
+# modify subfile
+np_array *= 0
+
+# write modified subfile (as 16bit image, in tiles) at the end of the TIFF file
+tiff.write_subfile(np_array.astype(np.uint16), tile_size=1024)
+
+# read TIFF tags from last subfile
+tiff_tags = tiff.subfile_tags[-1]
+print(tiff_tags.tile_width)  # output: 1024
 ```
 
 ## Tests

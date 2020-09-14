@@ -266,9 +266,25 @@ py::array_t<T> TiffFile::ReadSubfileRegion(
 
 template <typename T>
 void TiffFile::WriteSubfile(py::array_t<T> image, TiffTags tiff_tags, bool tiled) {
-    uint16 subfile_idx = GetSubfileCount();
-
     TIFF* tiff = nullptr;
+    if (GetSubfileCount() > 0) {
+        if (version_ == 42) {
+            tiff = TIFFOpen(file_path_.c_str(), "r");
+        } else {
+            tiff = TIFFOpen(file_path_.c_str(), "r8");
+        }
+
+        if (tiff == nullptr) {
+            throw std::runtime_error("Could not open file '" + std::string(file_path_) + "'!");
+        }
+
+        TIFFSetDirectory(tiff, 0);
+        if (TIFFIsTiled(tiff) != tiled)
+            throw std::runtime_error("Cannot mix scanline- and tile-based images within the same TIFF file!");
+
+        TIFFClose(tiff);
+    }
+
     if (version_ == 42) {
         tiff = TIFFOpen(file_path_.c_str(), "a");
     } else {
@@ -277,13 +293,6 @@ void TiffFile::WriteSubfile(py::array_t<T> image, TiffTags tiff_tags, bool tiled
 
     if (tiff == nullptr) {
         throw std::runtime_error("Could not open file '" + std::string(file_path_) + "'!");
-    }
-
-    if (GetSubfileCount() > 0) {
-        TIFFSetDirectory(tiff, 0);
-        if (TIFFIsTiled(tiff) != tiled)
-            throw std::runtime_error("Cannot mix scanline- and tile-based images within the same TIFF file!");
-        TIFFSetDirectory(tiff, subfile_idx);
     }
 
     // Baseline
@@ -310,6 +319,7 @@ void TiffFile::WriteSubfile(py::array_t<T> image, TiffTags tiff_tags, bool tiled
     }
     TIFFSetField(tiff, TIFFTAG_SAMPLEFORMAT, tiff_tags.sample_format);
 
+    uint16 subfile_idx = GetSubfileCount();
     subfile_tags_[subfile_idx] = tiff_tags;
     subfile_count_ += 1;
 

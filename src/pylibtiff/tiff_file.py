@@ -147,6 +147,7 @@ class TiffFile:
         tiff_tags.image_width = np_array.shape[1]
         tiff_tags.image_length = np_array.shape[0]
         tiff_tags.bits_per_sample = bits_per_sample
+        tiff_tags.compression = 5  # LZW
         tiff_tags.photometric = 1  # min is black
         tiff_tags.samples_per_pixel = 1
         tiff_tags.rows_per_strip = 2**32 - 1
@@ -221,6 +222,7 @@ class TiffFile:
         tiff_tags.image_width = np_array.shape[1]
         tiff_tags.image_length = np_array.shape[0]
         tiff_tags.bits_per_sample = bits_per_sample
+        tiff_tags.compression = 5  # LZW
         tiff_tags.photometric = 1  # min is black
         tiff_tags.samples_per_pixel = 1
         tiff_tags.rows_per_strip = 2**32 - 1

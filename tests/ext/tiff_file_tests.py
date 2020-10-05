@@ -311,6 +311,7 @@ class TiffFileTests(unittest.TestCase):
             tiff_tags.image_width = 3
             tiff_tags.image_length = 3
             tiff_tags.bits_per_sample = 8
+            tiff_tags.compression = 5  # LZW
             tiff_tags.photometric = 1  # min is black
             tiff_tags.samples_per_pixel = 1
             tiff_tags.rows_per_strip = 2**32 - 1
@@ -341,6 +342,7 @@ class TiffFileTests(unittest.TestCase):
             tiff_tags.image_width = 3
             tiff_tags.image_length = 3
             tiff_tags.bits_per_sample = 16
+            tiff_tags.compression = 5  # LZW
             tiff_tags.photometric = 1  # min is black
             tiff_tags.samples_per_pixel = 1
             tiff_tags.rows_per_strip = 2**32 - 1
@@ -387,6 +389,7 @@ class TiffFileTests(unittest.TestCase):
             tiff_tags.image_width = 100
             tiff_tags.image_length = 100
             tiff_tags.bits_per_sample = 8
+            tiff_tags.compression = 5  # LZW
             tiff_tags.photometric = 1  # min is black
             tiff_tags.samples_per_pixel = 1
             tiff_tags.rows_per_strip = 2**32 - 1

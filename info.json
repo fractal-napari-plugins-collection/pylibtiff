@@ -2,7 +2,7 @@
     "organization": "fmi-basel",
     "team": "gliberal",
     "repository": "pylibtiff",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "license": "MIT",
     "platforms": ["windows", "linux", "macos"],
     "languages" : {

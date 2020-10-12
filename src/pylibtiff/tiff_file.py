@@ -211,17 +211,11 @@ class TiffFile:
         :param np_array: Image data as a Numpy array.
         :param tile_size: size of the tile width and tile length.
         """
-        bits_per_sample = 0
-        if np_array.dtype == np.uint8:
-            bits_per_sample = 8
-        if np_array.dtype == np.uint16:
-            bits_per_sample = 16
-
         tiff_tags = TiffFileExtension.TiffTags()
         tiff_tags.new_subfile_type = 0  # undefined
         tiff_tags.image_width = np_array.shape[1]
         tiff_tags.image_length = np_array.shape[0]
-        tiff_tags.bits_per_sample = bits_per_sample
+        tiff_tags.bits_per_sample = 8
         tiff_tags.compression = 5  # LZW
         tiff_tags.photometric = 1  # min is black
         tiff_tags.samples_per_pixel = 1

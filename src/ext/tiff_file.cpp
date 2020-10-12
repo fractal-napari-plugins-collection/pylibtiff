@@ -383,6 +383,12 @@ void TiffFile::WriteSubfileRegion(
 
 template <typename T>
 void TiffFile::WriteMultiscaleSubfile(py::array_t<T> image, TiffTags tiff_tags) {
+    if (GetSubfileCount() > 0) {
+        throw std::runtime_error(
+            "Cannot append a multi-scale subfiles to an existing TIFF file!"
+        );
+    }
+
     TIFF* out_tiff = nullptr;
     if (version_ == 42) {
         out_tiff = TIFFOpen(file_path_.c_str(), "w");
@@ -398,9 +404,18 @@ void TiffFile::WriteMultiscaleSubfile(py::array_t<T> image, TiffTags tiff_tags) 
         (tiff_tags.tile_width == 0) || (tiff_tags.tile_length == 0)
     )
         throw std::runtime_error(
-            "Filed 'TileLength' or 'TileWidth' is missing!\n"
-            "A multi-scale image is written by tiles."
+            "A multi-scale image is written by tiles!\n"
+            "Field 'TileLength' or 'TileWidth' is missing."
         );
+
+    if (tiff_tags.bits_per_sample != 8) {
+        printf(
+            "WARNING: Can only write 8-bit multi-scale TIFF subfiles!\n"
+            "Changed the bits per sample tag from '%d' to '8'.",
+            tiff_tags.bits_per_sample
+        );
+        tiff_tags.bits_per_sample = 8;
+    }
 
     // Baseline
     TIFFSetField(out_tiff, TIFFTAG_SUBFILETYPE, tiff_tags.new_subfile_type);
@@ -482,7 +497,7 @@ void TiffFile::WriteMultiscaleSubfile(py::array_t<T> image, TiffTags tiff_tags) 
         subfile_tags_[GetSubfileCount()] = tiff_tags;
         subfile_count_ += 1;
 
-        TiffWriter::WriteDownsampledSubfileByTile<T>(
+        TiffWriter::WriteDownsampledSubfileByTile<uint8>(
             in_tiff, out_tiff, page, page + 1
         );
 

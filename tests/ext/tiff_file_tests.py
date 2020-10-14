@@ -315,9 +315,13 @@ class TiffFileTests(unittest.TestCase):
             tiff_tags.photometric = 1  # min is black
             tiff_tags.samples_per_pixel = 1
             tiff_tags.rows_per_strip = 2**32 - 1
+            tiff_tags.page_number.page_number = 1
+            tiff_tags.page_number.page_count = 2
             tiff_tags.tile_width = 16
             tiff_tags.tile_length = 16
             ptif.write_8(arr, tiff_tags, True)
+
+            tiff_tags.page_number.page_number = 2
             ptif.write_8(arr, tiff_tags, True)
 
             self.assertEqual(ptif.get_subfile_count(), 2)
@@ -346,9 +350,13 @@ class TiffFileTests(unittest.TestCase):
             tiff_tags.photometric = 1  # min is black
             tiff_tags.samples_per_pixel = 1
             tiff_tags.rows_per_strip = 2**32 - 1
+            tiff_tags.page_number.page_number = 1
+            tiff_tags.page_number.page_count = 2
             tiff_tags.tile_width = 16
             tiff_tags.tile_length = 16
             ptif.write_subfile_16(arr, tiff_tags, True)
+
+            tiff_tags.page_number.page_number = 2
             ptif.write_subfile_16(arr, tiff_tags, True)
 
             self.assertEqual(ptif.get_subfile_count(), 2)
@@ -385,7 +393,7 @@ class TiffFileTests(unittest.TestCase):
                     arr[y+radius, x+radius] = x**2 + y**2 <= radius**2
 
             tiff_tags = TiffFile.TiffTags()
-            tiff_tags.new_subfile_type = 2  # page type
+            tiff_tags.new_subfile_type = 1  # page type
             tiff_tags.image_width = 100
             tiff_tags.image_length = 100
             tiff_tags.bits_per_sample = 8

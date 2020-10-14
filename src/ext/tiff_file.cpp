@@ -308,10 +308,12 @@ void TiffFile::WriteSubfile(py::array_t<T> image, TiffTags tiff_tags, bool tiled
     TIFFSetField(tiff, TIFFTAG_MAXSAMPLEVALUE, tiff_tags.max_sample_value);
     TIFFSetField(tiff, TIFFTAG_PLANARCONFIG, tiff_tags.planar_config);
     // Extension
-    TIFFSetField(
-        tiff, TIFFTAG_PAGENUMBER,
-        tiff_tags.page_number.page_number, tiff_tags.page_number.page_count
-    );
+    if (tiff_tags.new_subfile_type == 2) {  // add metadata for page file type
+        TIFFSetField(
+            tiff, TIFFTAG_PAGENUMBER,
+            tiff_tags.page_number.page_number, tiff_tags.page_number.page_count
+        );
+    }
 
     if (tiled) {
         TIFFSetField(tiff, TIFFTAG_TILEWIDTH, tiff_tags.tile_width);  // sets tif->tif_flags |= TIFF_ISTILED
@@ -417,6 +419,15 @@ void TiffFile::WriteMultiscaleSubfile(py::array_t<T> image, TiffTags tiff_tags) 
         tiff_tags.bits_per_sample = 8;
     }
 
+    if (tiff_tags.new_subfile_type != 1) {
+        printf(
+            "WARNING: Found unsupported value for field 'NewSubfileType'!\n"
+            "Changed the subfile type tag from '%d' to '1' (FILETYPE_REDUCEDIMAGE).",
+            tiff_tags.new_subfile_type
+        );
+        tiff_tags.new_subfile_type = FILETYPE_REDUCEDIMAGE;
+    }
+
     // Baseline
     TIFFSetField(out_tiff, TIFFTAG_SUBFILETYPE, tiff_tags.new_subfile_type);
     TIFFSetField(out_tiff, TIFFTAG_IMAGEWIDTH, tiff_tags.image_width);
@@ -462,8 +473,6 @@ void TiffFile::WriteMultiscaleSubfile(py::array_t<T> image, TiffTags tiff_tags) 
             tiff_tags.tile_length
         )
     ) + 1;
-
-    tiff_tags.new_subfile_type = FILETYPE_REDUCEDIMAGE;
 
     for (uint32 page: range(0, kPageCount)) {
         // the TIFF handle must be renewed within each loop to reflect the

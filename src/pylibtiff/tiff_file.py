@@ -128,13 +128,18 @@ class TiffFile:
         """
         return self.write_subfile(np_array, tile_size)
 
-    def write_subfile(self, np_array, tile_size=0):
+    def write_subfile(self, np_array, tile_size=0, page=None):
         """
         Writes a new subfile to the end of the TIFF file.
 
         :param np_array: Image data as a Numpy array.
         :param tile_size: If set, writes the image in tiles.
                           Otherwise, writes the image in strips.
+        :param page: Defines the actual page of the subfile.
+                     This parameter expects the tuple (actual_page,
+                     total_page_number) or None.
+                     If a page is defined, the new subfile's type is set to
+                     "FILETYPE_PAGE" (2), otherwise "undefined" (0).
         """
         bits_per_sample = 0
         if np_array.dtype == np.uint8:
@@ -142,8 +147,23 @@ class TiffFile:
         if np_array.dtype == np.uint16:
             bits_per_sample = 16
 
+        if (
+            page is not None and (
+                not (isinstance(page, tuple) or isinstance(page, list))
+                or len(page) != 2
+            )
+        ):
+            raise ValueError(
+                "Found unsupported subfile page!\n"
+                "A tuple of the form (acutal_page, total__page_number) "
+                "or None is expected."
+            )
+
         tiff_tags = TiffFileExtension.TiffTags()
-        tiff_tags.new_subfile_type = 0  # undefined
+        if page is None:
+            tiff_tags.new_subfile_type = 0  # undefined
+        else:
+            tiff_tags.new_subfile_type = 2  # FILETYPE_PAGE
         tiff_tags.image_width = np_array.shape[1]
         tiff_tags.image_length = np_array.shape[0]
         tiff_tags.bits_per_sample = bits_per_sample
@@ -157,6 +177,9 @@ class TiffFile:
         tiff_tags.tile_width = tile_size
         tiff_tags.tile_length = tile_size
         tiff_tags.sample_format = 1  # unsigned integer
+        if page is not None:
+            tiff_tags.page_number.page_number = page[0]
+            tiff_tags.page_number.page_count = page[1]
 
         if np_array.dtype == np.uint8:
             self._tiff_file_ext.write_subfile_8(
@@ -212,7 +235,7 @@ class TiffFile:
         :param tile_size: size of the tile width and tile length.
         """
         tiff_tags = TiffFileExtension.TiffTags()
-        tiff_tags.new_subfile_type = 0  # undefined
+        tiff_tags.new_subfile_type = 1  # FILETYPE_REDUCEDIMAGE
         tiff_tags.image_width = np_array.shape[1]
         tiff_tags.image_length = np_array.shape[0]
         tiff_tags.bits_per_sample = 8

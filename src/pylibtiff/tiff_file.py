@@ -2,6 +2,7 @@
 This module contains a wrapper around libtiff's TIFF handle.
 """
 
+import math
 import numpy as np
 
 from pylibtiff.utils import wrap_index
@@ -170,7 +171,15 @@ class TiffFile:
         tiff_tags.compression = 5  # LZW
         tiff_tags.photometric = 1  # min is black
         tiff_tags.samples_per_pixel = 1
-        tiff_tags.rows_per_strip = 2**32 - 1
+        if tile_size == 0:
+            # it is recommended to choose "rows per strip" such that each
+            # strip is about 8K bytes.
+            # https://www.awaresystems.be/imaging/tiff/tifftags/rowsperstrip.html
+            tiff_tags.rows_per_strip = math.ceil(
+                8000 / ((bits_per_sample / 8) * tiff_tags.image_width)
+            )
+        else:
+            tiff_tags.rows_per_strip = 2**32 - 1
         tiff_tags.min_sample_value = np.min(np_array)
         tiff_tags.max_sample_value = np.max(np_array)
         tiff_tags.planar_config = 1  # chunky format

@@ -187,8 +187,8 @@ class TiffFileTests(unittest.TestCase):
             ptif = TiffFile('./tests/data/test.tif')
             self.assertEqual(len(ptif.subfile_tags), 0)
 
-            arr = np.zeros((100, 100), dtype=np.uint8)
-            radius = 50
+            arr = np.zeros((97, 97), dtype=np.uint8)
+            radius = 48
             for y in range(-radius, radius):
                 for x in range(-radius, radius):
                     arr[y+radius, x+radius] = x**2 + y**2 <= radius**2

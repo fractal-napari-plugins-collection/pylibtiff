@@ -486,8 +486,8 @@ void TiffFile::WriteMultiscaleSubfile(py::array_t<T> image, TiffTags tiff_tags) 
 
         // Baseline
         TIFFSetField(out_tiff, TIFFTAG_SUBFILETYPE, tiff_tags.new_subfile_type);
-        TIFFSetField(out_tiff, TIFFTAG_IMAGEWIDTH, tiff_tags.image_width >> (page + 1));
-        TIFFSetField(out_tiff, TIFFTAG_IMAGELENGTH, tiff_tags.image_length >> (page + 1));
+        TIFFSetField(out_tiff, TIFFTAG_IMAGEWIDTH, (tiff_tags.image_width + 1) >> (page + 1));
+        TIFFSetField(out_tiff, TIFFTAG_IMAGELENGTH, (tiff_tags.image_length + 1) >> (page + 1));
         TIFFSetField(out_tiff, TIFFTAG_BITSPERSAMPLE, tiff_tags.bits_per_sample);
         TIFFSetField(out_tiff, TIFFTAG_COMPRESSION, tiff_tags.compression);
         TIFFSetField(out_tiff, TIFFTAG_PHOTOMETRIC, tiff_tags.photometric);

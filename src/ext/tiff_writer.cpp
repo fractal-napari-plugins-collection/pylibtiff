@@ -404,14 +404,20 @@ void TiffWriter::WriteDownsampledSubfileByTile(
     if(!TIFFGetField(in_tiff, TIFFTAG_TILELENGTH, &tile_length))
         throw std::runtime_error("Missing field 'TileLength'!");
 
+    uint32 out_image_width, out_image_length;
+    if (!TIFFGetField(out_tiff, TIFFTAG_IMAGEWIDTH, &out_image_width))
+        throw std::runtime_error("Missing field 'ImageWidth'!");
+    if (!TIFFGetField(out_tiff, TIFFTAG_IMAGELENGTH, &out_image_length))
+        throw std::runtime_error("Missing field 'ImageLength'!");
+
     if (tile_width != tile_length)
         throw std::runtime_error("The fields 'TileLength' and 'TileWidth' must have the same value!");
 
     T* in_buffer = (T*) _TIFFmalloc(TIFFTileSize(in_tiff));
     T* out_buffer = (T*) _TIFFmalloc(TIFFTileSize(out_tiff));
 
-    for (uint32 img_row=0; img_row < image_length; img_row += tile_length * 2) {
-        for (uint32 img_column=0; img_column < image_width; img_column += tile_width * 2) {
+    for (uint32 img_row=0; (img_row < image_length) & ((img_row >> 1) < out_image_length); img_row += tile_length * 2) {
+        for (uint32 img_column=0; (img_column < image_width) & ((img_column >> 1) < out_image_width); img_column += tile_width * 2) {
             for (uint32 row_delta = 0; row_delta < 2 * tile_length && img_row + row_delta < image_length; row_delta += tile_length) {
                 for (uint32 column_delta = 0; column_delta < 2 * tile_width && img_column + column_delta < image_width; column_delta += tile_width) {
                     std::memset(in_buffer, 255, TIFFTileSize(in_tiff));

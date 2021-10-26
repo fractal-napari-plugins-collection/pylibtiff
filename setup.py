@@ -61,6 +61,7 @@ setup(
     author_email='dario.vischi@fmi.ch',
     classifiers=[
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
     ],
     packages=find_packages('src', exclude=['tests']),
@@ -74,8 +75,8 @@ setup(
         'pylibtiff': []
     },
     # scripts=['bin/script.py'],
-    url='https://github.com/fmi-basel/pylibtiff/',
-    license='LICENSE.txt',
+    url='https://github.com/fractal-napari-plugins-collection/pylibtiff/',
+    license='MIT',
     description='libtiff wrapper for Python.',
     long_description=open('README.md').read(),
     ext_modules=[tiff_extention_module],

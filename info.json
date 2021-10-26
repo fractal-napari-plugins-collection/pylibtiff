@@ -1,11 +1,10 @@
 {
-    "organization": "fmi-basel",
-    "team": "gliberal",
+    "organization": "fractal-napari-plugins-collection",
     "repository": "pylibtiff",
     "version": "1.0.7",
     "license": "MIT",
     "platforms": ["windows", "linux", "macos"],
     "languages" : {
-        "python": ["3.6", "3.8"]
+        "python": ["3.6", "3.7", "3.8"]
     }
 }
